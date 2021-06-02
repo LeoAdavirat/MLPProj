@@ -23,7 +23,7 @@ from typing import Tuple
 # cap = cv2.VideoCapture(0)
 # cap = cv2.VideoCapture("카메라 찾는 유나 [ITZY].mp4")
 # cap = cv2.VideoCapture("Rosé is perfectly symmetrical [TikTok].mp4")
-cap = cv2.VideoCapture("Untitleddsa Project.mp4")
+# cap = cv2.VideoCapture("Untitleddsa Project.mp4")
 
 #VARIABLE SET
 
@@ -33,6 +33,7 @@ class FaceDetection_er:
 	Thickness: int
 	DLC: int
 	RLC: int
+	input_feed: str or int = 0
 	ColorMode_1: Tuple[int, int, int] = (50, 205, 50)
 	ColorMode_2: Tuple[int, int, int] = (00, 00, 255)
 
@@ -54,17 +55,22 @@ class FaceDetection_er:
 		return StableEyeX, StableEyeY, StableNose[0], StableNose[1], CurrentEyeX, CurrentEyeY
 
 	def MainProgram(self):
+# inputfeed = "Untitleddsa Project.mp4"
+# inputfeed = "Rosé is perfectly symmetrical [TikTok].mp4"
+# inputfeed = "카메라 찾는 유나 [ITZY].mp4"
+
+		cap = cv2.VideoCapture(self.input_feed)
 		pTime = 0
-		PastLocations = deque(8 * DL * (0,) , maxlen = 8 * DL)
-		mpFaceDetection = mp.solutions.face_detection
+		PastLocations = deque(8 * self.DLC * (0,) , maxlen = 8 * self.DLC)
+		mpFaceDetection = mp.solutions.face_detectionc
 		mpDraw = mp.solutions.drawing_utils
 		faceDetection = mpFaceDetection.FaceDetection(min_detection_confidence = detection_min_complexity)
-		FaceDetectionfr = FaceDetection_er(Thick, DL, RL)
+		FaceDetectionfr = FaceDetection_er(self.Thickness, self.DLC, self.RLC)
 		f = 0
 		# for i in range(2000):
 		while True:
 			_, img = cap.read()
-			debugimg = np.zeros(img.shape)
+			# debugimg = np.zeros(img.shape)
 			try:
 				imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 			except cv2.error:
@@ -85,12 +91,12 @@ class FaceDetection_er:
 						points = mpDraw._normalized_to_pixel_coordinates(part.x, part.y, FaceWidth, FaceHeight)
 						PastLocations.appendleft(points[0])
 						PastLocations.appendleft(points[1])
-					FaceDetectionfr.DrawPoints(debugimg, PastLocations)
-					cv2.rectangle(debugimg, FaceBox, (255, 0, 255), Thick)
-					cv2.putText(debugimg, f'{int(detection.score[0] * 100)}%', (FaceBox[0], FaceBox[1] - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+					FaceDetectionfr.DrawPoints(img, PastLocations)
+					cv2.rectangle(img, FaceBox, (255, 0, 255), self.Thickness)
+					cv2.putText(img, f'{int(detection.score[0] * 100)}%', (FaceBox[0], FaceBox[1] - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
 					EX, EY, NX, NY, CEX, CEY = FaceDetectionfr.Stable(PastLocations)
-					cv2.line(debugimg, (EX, EY), (NX, NY), (50, 225, 50), Thick)
-					cv2.line(debugimg, (CEX, CEY), (NX, NY), (0, 0, 205), Thick)
+					# cv2.line(img, (EX, EY), (NX, NY), (50, 225, 50), self.Thickness)
+					# cv2.line(img, (CEX, CEY), (NX, NY), (0, 0, 205), self.Thickness)
 					if f == 0:
 						print('EX    EY   NX   NY   CEX   CEY')
 						f += 1
@@ -103,10 +109,13 @@ class FaceDetection_er:
 			pTime = cTime
 			cv2.putText(img, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 2)
 			# SHOW FRAME
-			cv2.imshow("img", debugimg)
+			cv2.imshow("img", img)
 			if cv2.waitKey(32) & 0xFF == ord(' '):
 				break
 
 		cap.release()
 		cv2.destroyAllWindows()
 
+
+# FaceDetectionER = FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
+# FaceDetectionER.MainProgram()
