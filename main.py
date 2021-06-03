@@ -1,4 +1,5 @@
 import MainLibrary
+import TestLibrary
 import numpy as np
 import cv2
 
@@ -15,5 +16,6 @@ FPS_display = True
 inputfeed = "Rosé is perfectly symmetrical [TikTok].mp4"
 # inputfeed = "카메라 찾는 유나 [ITZY].mp4"
 
-FaceDetectionER = MainLibrary.FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
+FaceDetectionER = TestLibrary.FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
+# FaceDetectionER = MainLibrary.FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
 FaceDetectionER.MainProgram()

@@ -61,49 +61,49 @@ class FaceDetection_er:
 
 		cap = cv2.VideoCapture(self.input_feed)
 		pTime = 0
-		PastLocations = deque(8 * self.DLC * (0,) , maxlen = 8 * self.DLC)
-		mpFaceDetection = mp.solutions.face_detection
-		mpDraw = mp.solutions.drawing_utils
-		faceDetection = mpFaceDetection.FaceDetection(min_detection_confidence = detection_min_complexity)
-		FaceDetectionfr = FaceDetection_er(self.Thickness, self.DLC, self.RLC)
-		f = 0
+		# PastLocations = deque(8 * self.DLC * (0,) , maxlen = 8 * self.DLC)
+		# mpFaceDetection = mp.solutions.face_detectionc
+		# mpDraw = mp.solutions.drawing_utils
+		# faceDetection = mpFaceDetection.FaceDetection(min_detection_confidence = detection_min_complexity)
+		# FaceDetectionfr = FaceDetection_er(self.Thickness, self.DLC, self.RLC)
+		# f = 0
 		# for i in range(2000):
 		while True:
 			_, img = cap.read()
-			# debugimg = np.zeros(img.shape)
-			try:
-				imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-			except cv2.error:
-				print('Error: No more frames detected or there are problems with input frames')
-				break
-			results = faceDetection.process(imgRGB)
-			if results.detections:
-				for id, detection in enumerate(results.detections):
-					FaceBoxC = detection.location_data.relative_bounding_box
-					KeyPoints = detection.location_data.relative_keypoints
-					FaceHeight, FaceWidth, _ = img.shape	
-					FaceBox = int(FaceBoxC.xmin * FaceWidth), int(FaceBoxC.ymin * FaceHeight), int(FaceBoxC.width * FaceWidth), int(FaceBoxC.height * FaceHeight)
-					CenterX, CenterY = int(FaceBoxC.xmin * FaceWidth + FaceBoxC.width * FaceWidth / 2), int(FaceBoxC.ymin * FaceHeight + FaceBoxC.height * FaceHeight / 2)
-					PastLocations.appendleft(CenterX)
-					PastLocations.appendleft(CenterY)
-					*key_px, _, _, _ = detection.location_data.relative_keypoints
-					for part in key_px:
-						points = mpDraw._normalized_to_pixel_coordinates(part.x, part.y, FaceWidth, FaceHeight)
-						PastLocations.appendleft(points[0])
-						PastLocations.appendleft(points[1])
-					FaceDetectionfr.DrawPoints(img, PastLocations)
-					cv2.rectangle(img, FaceBox, (255, 0, 255), self.Thickness)
-					cv2.putText(img, f'{int(detection.score[0] * 100)}%', (FaceBox[0], FaceBox[1] - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-					EX, EY, NX, NY, CEX, CEY = FaceDetectionfr.Stable(PastLocations)
-					# cv2.line(img, (EX, EY), (NX, NY), (50, 225, 50), self.Thickness)
-					# cv2.line(img, (CEX, CEY), (NX, NY), (0, 0, 205), self.Thickness)
-					if f == 0:
-						print('EX    EY   NX   NY   CEX   CEY')
-						f += 1
-					print('(' + '{:0>3}'.format(EX) + ', ' + '{:0>3}'.format(EY) + ')', '(' + '{:0>3}'.format(NX) + 
-						',' + '{:0>3}'.format(NY) + ')', '(' + '{:0>3}'.format(CEX) + ', ' + '{:0>3}'.format(CEY) + ')')
-			else:
-				print('No faces found')
+			# # debugimg = np.zeros(img.shape)
+			# try:
+			# 	imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+			# except cv2.error:
+			# 	print('Error: No more frames detected or there are problems with input frames')
+			# 	break
+			# results = faceDetection.process(imgRGB)
+			# if results.detections:
+			# 	for id, detection in enumerate(results.detections):
+			# 		FaceBoxC = detection.location_data.relative_bounding_box
+			# 		KeyPoints = detection.location_data.relative_keypoints
+			# 		FaceHeight, FaceWidth, _ = img.shape	
+			# 		FaceBox = int(FaceBoxC.xmin * FaceWidth), int(FaceBoxC.ymin * FaceHeight), int(FaceBoxC.width * FaceWidth), int(FaceBoxC.height * FaceHeight)
+			# 		CenterX, CenterY = int(FaceBoxC.xmin * FaceWidth + FaceBoxC.width * FaceWidth / 2), int(FaceBoxC.ymin * FaceHeight + FaceBoxC.height * FaceHeight / 2)
+			# 		PastLocations.appendleft(CenterX)
+			# 		PastLocations.appendleft(CenterY)
+			# 		*key_px, _, _, _ = detection.location_data.relative_keypoints
+			# 		for part in key_px:
+			# 			points = mpDraw._normalized_to_pixel_coordinates(part.x, part.y, FaceWidth, FaceHeight)
+			# 			PastLocations.appendleft(points[0])
+			# 			PastLocations.appendleft(points[1])
+			# 		FaceDetectionfr.DrawPoints(img, PastLocations)
+			# 		cv2.rectangle(img, FaceBox, (255, 0, 255), self.Thickness)
+			# 		cv2.putText(img, f'{int(detection.score[0] * 100)}%', (FaceBox[0], FaceBox[1] - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+			# 		EX, EY, NX, NY, CEX, CEY = FaceDetectionfr.Stable(PastLocations)
+			# 		# cv2.line(img, (EX, EY), (NX, NY), (50, 225, 50), self.Thickness)
+			# 		# cv2.line(img, (CEX, CEY), (NX, NY), (0, 0, 205), self.Thickness)
+			# 		if f == 0:
+			# 			print('EX    EY   NX   NY   CEX   CEY')
+			# 			f += 1
+			# 		print('(' + '{:0>3}'.format(EX) + ', ' + '{:0>3}'.format(EY) + ')', '(' + '{:0>3}'.format(NX) + 
+			# 			',' + '{:0>3}'.format(NY) + ')', '(' + '{:0>3}'.format(CEX) + ', ' + '{:0>3}'.format(CEY) + ')')
+			# else:
+			# 	print('No faces found')
 			cTime = time.time()
 			fps = 1/(cTime-pTime)
 			pTime = cTime
