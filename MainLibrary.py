@@ -46,8 +46,6 @@ class FaceDetection_er:
 	ColorMode_1: Tuple[int, int, int] = (50, 205, 50)
 	ColorMode_2: Tuple[int, int, int] = (00, 00, 255)
 	b = 3
-		
-
 
 	def InitVars(self):
 		self.cap = cv2.VideoCapture(self.input_feed)
@@ -61,7 +59,6 @@ class FaceDetection_er:
 		self.PhuongSai = deque(maxlen = 3)
 		# self.BestLine = 
 		# for i in range(2000):
-
 
 	def IterFrame(self):
 		_, img = self.cap.read()
@@ -92,35 +89,24 @@ class FaceDetection_er:
 		if cv2.waitKey(32) & 0xFF == ord(' '):
 			cap.release()
 			cv2.destroyAllWindows()
-			raise KeyBoardInterruptError("Pressing Space has interrupted the program")	
+			raise KeyBoardInterruptError("Pressing Space has interrupted the program")
 
 	def Translate(self):	
 		for i in range(3):
 			self.Ave.appendleft(sum(self.PastLocations[i + j] for j in range(3, self.DLC)) / (self.DLC - 3))
 		for i in range(3):
 			self.PhuongSai.appendleft(sum((self.PastLocations[i] - self.Ave[-i -1]) for j in range(3, self.DLC)) / (self.DLC - 3))
-		# print([self.PastLocations[i] for i in range(self.DLC)])
-		# print([self.PastLocations[i + 1] for i in range(self.DLC)])
-		# print([self.PastLocations[i + 2] for i in range(self.DLC)])
-		# print(self.Ave)
-		check = collections.deque(maxlen = 3)
-		for i in self.PastLocations:
-			check.appendleft(i > abs(1 / self.sensitivity * self.FaceWidth))
-		print(check)
-		check = list(check)
-		check.sort()
-		print(check)
-		print(check, 1 / self.sensitivity * self.FaceWidth, end = ' ')
+		check = []
 		for i in self.PhuongSai:
-			print(i > abs(1 / self.sensitivity * self.FaceWidth), end = ' ')
-		print('\n')
-		# print('\n')
-
+			if i > 1 / self.sensitivity * self.FaceWidth:
+				check.append(1)
+			elif i < - 1 / self.sensitivity * self.FaceWidth:
+				check.append(-1)
+			else:
+				check.append(0)
+		return sum(check)
 	def CalculateTrend(self):
 		CL = linear_model.LinearRegression()
 		model = CL.fit([PastLocations[i] for i in range(0, self.DLC, 3)], [PastLocations[i + 1] for i in range(0, self.DLC, 3)], [PastLocations[i + 2] for i in range(0, self.DLC, 3)])
-
-
-
 # FaceDetectionER = FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
 # FaceDetectionER.MainProgram()
