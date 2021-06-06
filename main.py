@@ -12,13 +12,15 @@ RL = 5 #RENDER LIMIT - SAME AS DEQUE LIMIT BUT FOR VISUAL PURPOSE
 detection_min_complexity = 0.5 #THIS ALTERS HARSHNESS OF FACE DETECTION FILTERS
 FPS_display = True
 MultiplyingFrequency = 15 #THIS DISPLAYS MORE POINTS ON THE GRAPHS
+sensitivity = 14 #HOW SENSITIVE THE DETECTOR IS
 
 # inputfeed = "Untitleddsa Project.mp4"
-inputfeed = "Rosé is perfectly symmetrical [TikTok].mp4"
+# inputfeed = "Rosé is perfectly symmetrical [TikTok].mp4"
 # inputfeed = "카메라 찾는 유나 [ITZY].mp4"
 
 # FaceDetectionER = TestLibrary.FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
-FaceDetectionER = MainLibrary.FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
+FaceDetectionER = MainLibrary.FaceDetection_er(Thick, DL, RL, sensitivity)
 FaceDetectionER.InitVars()
 while True:
 	FaceDetectionER.IterFrame()
+	FaceDetectionER.Translate()
