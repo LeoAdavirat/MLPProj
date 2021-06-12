@@ -25,6 +25,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import linear_model
 import math
+import statistics
 
 #VIDEO FEED
 # cap = cv2.VideoCapture(0)
@@ -50,13 +51,15 @@ class FaceDetection_er:
 	def InitVars(self):
 		self.cap = cv2.VideoCapture(self.input_feed)
 		self.pTime = 0
-		self.PastLocations = deque(3 * self.DLC * (0,) , maxlen = 3 * self.DLC)
+		self.PastLocations = np.zeros((3, self.DLC), np.uint8)
 		self.mpFaceDetection = mp.solutions.face_detection
 		self.mpDraw = mp.solutions.drawing_utils
 		self.faceDetection = self.mpFaceDetection.FaceDetection(min_detection_confidence = detection_min_complexity)
 		self.FaceDetectionfr = FaceDetection_er()
-		self.Ave = deque(maxlen = 3)
-		self.PhuongSai = deque(maxlen = 3)
+		self.PhuongSai = deque(maxlen = 3 * (self.DLC - 1))
+		self.SumOfPS = deque(maxlen = 3 * self.DLC)
+		self.FaceWidth = None
+		self.id = False
 		# self.BestLine = 
 		# for i in range(2000):
 
@@ -72,14 +75,16 @@ class FaceDetection_er:
 			for id, detection in enumerate(results.detections):
 				FaceHeight, self.FaceWidth, _ = img.shape			
 				*key_px, _, _, _ = detection.location_data.relative_keypoints
+				temp = []
 				for part in key_px:
 					points = self.mpDraw._normalized_to_pixel_coordinates(part.x, part.y, self.FaceWidth, FaceHeight)
-					self.PastLocations.appendleft(points[0])
-				cv2.line(img, (self.PastLocations[0], 0), (self.PastLocations[0], FaceHeight), (50, 205, 50), 3)
-				cv2.line(img, (self.PastLocations[1], 0), (self.PastLocations[1], FaceHeight), (205, 50, 205), 3)
-				cv2.line(img, (self.PastLocations[2], 0), (self.PastLocations[2], FaceHeight), (125, 125, 125), 3)
-		else:
-			print('No faces found')
+					temp.append([points[0]])
+				# print(temp)
+				self.PastLocations = np.append(self.PastLocations, temp, axis = 1)
+				self.PastLocations = np.delete(self.PastLocations, slice(None, 1), axis = 1)
+				cv2.line(img, (self.PastLocations[0][-1], 0), (self.PastLocations[0][-1], FaceHeight), (50, 205, 50), 3)
+				cv2.line(img, (self.PastLocations[1][-1], 0), (self.PastLocations[1][-1], FaceHeight), (205, 50, 205), 3)
+				cv2.line(img, (self.PastLocations[2][-1], 0), (self.PastLocations[2][-1], FaceHeight), (125, 125, 125), 3)
 		cTime = time.time()
 		self.fps = 1/(cTime-self.pTime)
 		self.pTime = cTime
@@ -91,22 +96,29 @@ class FaceDetection_er:
 			cv2.destroyAllWindows()
 			raise KeyBoardInterruptError("Pressing Space has interrupted the program")
 
-	def Translate(self):	
-		for i in range(3):
-			self.Ave.appendleft(sum(self.PastLocations[i + j] for j in range(3, self.DLC)) / (self.DLC - 3))
-		for i in range(3):
-			self.PhuongSai.appendleft(sum((self.PastLocations[i] - self.Ave[-i -1]) for j in range(3, self.DLC)) / (self.DLC - 3))
-		check = []
-		for i in self.PhuongSai:
-			if i > 1 / self.sensitivity * self.FaceWidth:
-				check.append(1)
-			elif i < - 1 / self.sensitivity * self.FaceWidth:
-				check.append(-1)
-			else:
-				check.append(0)
-		return sum(check)
-	def CalculateTrend(self):
-		CL = linear_model.LinearRegression()
-		model = CL.fit([PastLocations[i] for i in range(0, self.DLC, 3)], [PastLocations[i + 1] for i in range(0, self.DLC, 3)], [PastLocations[i + 2] for i in range(0, self.DLC, 3)])
+	def Translate(self):
+		if self.FaceWidth != None:
+			Ave = [statistics.fmean(self.PastLocations[i]) for i in range(3)]
+			check = []
+			for i in range(3):
+				tem = self.PastLocations[i][-1] - Ave[i]
+				if tem <= -self.sensitivity:
+					check.append(-1)
+				if tem >= self.sensitivity:
+					check.append(1)
+				if -self.sensitivity < tem < self.sensitivity:
+					check.append(0)
+			return sum(check)
+		else:
+			print('No Faces Detected')
+
+	# def Translate(self):
+	# 	self.PhuongSai = [self.PastLocations[i + 4] - self.PastLocations[i] for i in range(self.DLC - 1)]
+	# 	for i in range(3):
+	# 		self.SumOfPS.appendleft([self.PhuongSai[j + i] for j in range(self.DLC - 1)])
+	# 	print([self.SumOfPS[i] for i in range(3)])
+	# def CalculateTrend(self):
+	# 	CL = linear_model.LinearRegression()
+	# 	model = CL.fit([PastLocations[i] for i in range(0, self.DLC, 3)], [PastLocations[i + 1] for i in range(0, self.DLC, 3)], [PastLocations[i + 2] for i in range(0, self.DLC, 3)])
 # FaceDetectionER = FaceDetection_er(Thick, DL, RL, input_feed = inputfeed)
 # FaceDetectionER.MainProgram()
