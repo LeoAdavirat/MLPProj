@@ -29,8 +29,8 @@ while True:
 	FaceDetectionER.IterFrame()
 	currentiter = FaceDetectionER.Translate()
 	if currentiter == 3:
-		print('right')
-	elif currentiter == -3:
 		print('left')
+	elif currentiter == -3:
+		print('right')
 	else:
 		print('not moving')
