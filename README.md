@@ -9,3 +9,5 @@ I also drew important points on the face and an axis of symmetry based on locati
 Tomorrow, I will analyse those data
 
 I am analysing my data and it's close to finished. Well, I may have to reinstall my OS
+
+Wow I just lost my Arduino Board. Now I'll have to buy another :<
