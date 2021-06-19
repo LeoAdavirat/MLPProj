@@ -10,5 +10,7 @@ Tomorrow, I will analyse those data
 
 I am analysing my data and it's close to finished. Well, I may have to reinstall my OS
 
+Oh I just forgot to say, I've finished analysing my data using square error method and it works pretty well.
+
 Wow I just lost my Arduino Board. Now I'll have to buy another :<
 Instead of buying another Arduino Board, I believe I can simulate it, but the connections between Python and Arduino might get a little complicated.
