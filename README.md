@@ -14,3 +14,5 @@ Oh I just forgot to say, I've finished analysing my data using square error meth
 
 Wow I just lost my Arduino Board. Now I'll have to buy another :<
 Instead of buying another Arduino Board, I believe I can simulate it, but the connections between Python and Arduino might get a little complicated.
+It seems Proteus is able to animate Arduino but it requires a hex file which is created after running the codes.
+So... I'm trying to figure out how to run my code in real time with Proteus
